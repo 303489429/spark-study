@@ -22,8 +22,8 @@ public class TransformationOperation {
     public static void main(String[] args) {
         //map();
         //reduceByKey();
-        //join();
-        cogroup();
+        join();
+        //cogroup();
     }
 
     private static void map(){

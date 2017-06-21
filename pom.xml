@@ -12,7 +12,7 @@
   <modules>
     <module>java</module>
     <module>scala</module>
-    <module>base</module>
+    <module>hadoop</module>
   </modules>
 
   <properties>
@@ -121,7 +121,7 @@
           <includeProjectDependencies>true</includeProjectDependencies>
           <includePluginDependencies>false</includePluginDependencies>
           <classpathScope>compile</classpathScope>
-          <mainClass>cn.spark.App</mainClass>
+          <mainClass>cn.hadoop.App</mainClass>
         </configuration>
       </plugin>
 

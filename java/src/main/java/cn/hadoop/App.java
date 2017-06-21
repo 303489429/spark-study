@@ -1,4 +1,4 @@
-package cn.spark;
+package cn.hadoop;
 
 /**
  * Hello world!

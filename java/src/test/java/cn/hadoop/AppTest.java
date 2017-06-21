@@ -1,4 +1,4 @@
-package cn.spark;
+package cn.hadoop;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

@@ -1,4 +1,4 @@
-package cn.spark.core;
+package cn.hadoop.core;
 
 import scala.math.Ordered;
 

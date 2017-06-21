@@ -1,4 +1,4 @@
-package cn.spark.core;
+package cn.hadoop.core;
 
 import org.apache.spark.Accumulator;
 import org.apache.spark.SparkConf;

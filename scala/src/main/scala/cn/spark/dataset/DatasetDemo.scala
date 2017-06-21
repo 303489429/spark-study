@@ -2,6 +2,7 @@ package scala.cn.spark.dataset
 
 import com.google.gson.JsonParser
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 /**
   * Created by wangzhilong on 2017/6/16.
@@ -66,18 +67,46 @@ object DatasetDemo {
 
 //    employee.randomSplit(Array(3,10)).foreach(ds => ds.show())
 
-//    employee.flatMap{row =>
-//      val arr = Array(4,7,2,6,9,1)
-//      val ds = spark.createDataset(arr)
-//      ds.sort()
-//      ds.take(3)
-//    }.show()
 
-    val employee3 = employee2.withColumn("rank",lit("0")).select($"name",$"age",$"salary",$"rank")
-    employee3.show()
-    val employee4 = employee3.drop($"rank")
-    employee4.show()
-    employee.select($"name",$"age",$"salary").union(employee4)show()
+//    val employee3 = employee2.withColumn("rank",lit("0")).select($"name",$"age",$"salary",$"rank")
+//    employee3.show()
+//    val employee4 = employee3.drop($"rank")
+//    employee4.show()
+//    employee.select($"name",$"age",$"salary").union(employee4)show()
+
+//    employee.join(department,$"depId" === $"id")
+//      .groupBy(department("name"))
+//      .agg(avg(employee("salary")),sum(employee("salary")),max(employee("salary")))
+//      .show()
+//
+//    employee
+//      .groupBy($"depId")
+//      .agg(collect_list("name"),collect_set("name"))
+//      .collect()
+//      .foreach(println)
+
+
+    //窗口函数
+    val frame = employee
+      .join(department, $"depId" === $"id")
+      .select(department("name").as("departName"), employee("name").as("name"), $"age", $"gender", $"salary")
+      .cache
+
+    val t1 = frame
+      .withColumn("rank",
+        dense_rank().over(Window.partitionBy("departName").orderBy($"salary".desc))
+        )
+      .withColumn("sum",
+        sum("salary") over(Window.partitionBy("departName").orderBy($"salary".desc))
+        )
+
+    val t2 = frame
+      .groupBy("departName")
+      .agg(sum("salary").as("total"))
+
+    val all = t1.join(t2,t1("departName") === t2("departName")).drop(t1("departName"))
+
+    all.show()
 
 
   }

@@ -1,6 +1,7 @@
 package cn.hadoop.job;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -9,6 +10,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -16,7 +19,7 @@ import java.util.StringTokenizer;
 /**
  * Created by wangzhilong on 2017/6/21.
  */
-public class WordCountMapReduce {
+public class WordCountMapReduce extends Configured implements Tool {
 
     //step 1: Map
     /**
@@ -50,9 +53,8 @@ public class WordCountMapReduce {
     }
 
     //step 3: driver code
-    private void run(String[] args) throws Exception {
-        Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf,"WordCount");
+    public int run(String[] args) throws Exception {
+        Job job = Job.getInstance(getConf(),"WordCount");
         job.setJarByClass(this.getClass());
         job.setMapperClass(TokenizerMapper.class);
         job.setReducerClass(IntSumReducer.class);
@@ -64,11 +66,14 @@ public class WordCountMapReduce {
 
         FileInputFormat.addInputPath(job,new Path(args[0]));
         FileOutputFormat.setOutputPath(job,new Path(args[1]));
-        int isSuccess = job.waitForCompletion(true) ? 0 : 1;
-        System.exit(isSuccess);
+
+        return job.waitForCompletion(true) ? 0 : 1;
     }
 
     public static void main(String[] args) throws Exception {
-        new WordCountMapReduce().run(args);
+        Configuration conf = new Configuration();
+        int run = ToolRunner.run(conf, new WordCountMapReduce(), args);
+        //int run = new WordCountMapReduce().run(args);
+        System.exit(run);
     }
 }
